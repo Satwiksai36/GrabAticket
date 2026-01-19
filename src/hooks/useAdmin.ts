@@ -625,6 +625,27 @@ export const useDeletePromoCode = () => {
   });
 };
 
+export const useActivePromotions = () => {
+  return useQuery({
+    queryKey: ['active-promotions'],
+    queryFn: async () => {
+      const now = new Date().toISOString();
+      const { data, error } = await supabase
+        .from('promotions')
+        .select('*')
+        // We want promotions where start_date <= now AND end_date >= now
+        // But supabase filtering with 'lte' and 'gte' on timestamps can be tricky if timezone issues arise.
+        // Simple logic:
+        .lte('start_date', now)
+        .gte('end_date', now)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+};
+
 // Announcements
 export const useAdminAnnouncements = () => {
   return useQuery({
