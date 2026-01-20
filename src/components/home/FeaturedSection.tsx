@@ -262,7 +262,7 @@ const FeaturedSection: React.FC = () => {
           ) : (
             <Carousel opts={{ align: "start" }} className="w-full">
               <CarouselContent className="-ml-4">
-                {events?.map((event) => (
+                {events?.filter(event => event.category !== 'Sports').map((event) => (
                   <CarouselItem key={event.id} className="pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4">
                     <Link to={`/events/${event.id}`}>
                       <Card className="group overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1 bg-card border-border/50 h-full">

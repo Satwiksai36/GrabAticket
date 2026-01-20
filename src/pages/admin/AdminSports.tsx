@@ -113,8 +113,8 @@ const AdminSports: React.FC = () => {
 
             const eventData = {
                 title: formData.title,
-                description: formData.description || undefined,
-                image_url: formData.image_url || undefined,
+                description: formData.description || null,
+                image_url: formData.image_url || null,
                 date: eventDate,
                 venue: 'To Be Announced',
                 category: formData.sport_type || 'Sports', // Use selected sport type or default
@@ -122,12 +122,12 @@ const AdminSports: React.FC = () => {
                 is_free: false,
                 total_tickets: 0,
                 available_tickets: 0,
-                organizer: formData.organizer || undefined,
-                // league: formData.league || undefined, // Not in DB
+                organizer: formData.organizer || null,
+                league: formData.league || null,
                 district_id: undefined,
-                // home_team: formData.home_team || undefined, // Not in DB
-                // away_team: formData.away_team || undefined, // Not in DB
-                // is_active: formData.is_active, // Not in DB
+                home_team: formData.home_team || null,
+                away_team: formData.away_team || null,
+                is_active: formData.is_active,
             };
 
             if (editingEvent) {

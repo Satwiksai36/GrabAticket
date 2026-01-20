@@ -94,7 +94,7 @@ const AdminPlays: React.FC = () => {
             description: event.description || '',
             image_url: event.image_url || '',
             organizer: event.organizer || '',
-            director: (event as any).director || '',
+            director: event.artist || '',
             play_type: event.category === 'Theatre' ? '' : event.category || '',
             language: event.language || '',
             is_active: event.is_active ?? true,
@@ -109,8 +109,8 @@ const AdminPlays: React.FC = () => {
 
             const eventData = {
                 title: formData.title,
-                description: formData.description || undefined,
-                image_url: formData.image_url || undefined,
+                description: formData.description || null,
+                image_url: formData.image_url || null,
                 date: eventDate,
                 venue: 'To Be Announced',
                 category: formData.play_type || 'Theatre',
@@ -118,11 +118,11 @@ const AdminPlays: React.FC = () => {
                 is_free: false,
                 total_tickets: 0,
                 available_tickets: 0,
-                organizer: formData.organizer || undefined,
+                organizer: formData.organizer || null,
                 district_id: undefined,
-                // director: formData.director || undefined, // Not in DB
-                // language: formData.language || undefined, // Not in DB
-                // is_active: formData.is_active, // Not in DB
+                artist: formData.director || null, // Map director to artist col
+                language: formData.language || null,
+                is_active: formData.is_active,
             };
 
             if (editingEvent) {

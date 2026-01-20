@@ -32,7 +32,7 @@ import { useCity } from '@/contexts/CityContext';
 import { useEvents } from '@/hooks/useEvents';
 import { format, isAfter, isBefore, startOfDay } from 'date-fns';
 
-const categories = ['All', 'Music Festival', 'Comedy', 'Music', 'Conference', 'Art & Culture', 'Food & Drink', 'Sports'];
+const categories = ['All', 'Music Festival', 'Music', 'Conference', 'Art & Culture', 'Food & Drink'];
 const priceRanges = [
   { label: 'All Prices', value: 'all' },
   { label: 'Free', value: 'free' },
@@ -57,6 +57,14 @@ const Events: React.FC = () => {
       event.venue.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || event.category === selectedCategory;
     const matchesFree = !showFreeOnly || event.is_free;
+    const isNotSports = event.category !== 'Sports';
+
+    // Also exclude Play categories from general Events
+    const playCategories = ['Drama', 'Magic Show', 'Comedy', 'Musical', 'Theatre', 'Performing Arts', 'Tragedy', 'Opera', 'Ballet'];
+    const isNotPlay = !playCategories.includes(event.category) &&
+      !event.category.toLowerCase().includes('magic') &&
+      !event.category.toLowerCase().includes('drama') &&
+      !event.category.toLowerCase().includes('theatre');
 
     // Price range filter
     let matchesPrice = true;
@@ -80,7 +88,7 @@ const Events: React.FC = () => {
       matchesDate = !isBefore(eventDate, filterDate);
     }
 
-    return matchesSearch && matchesCategory && matchesFree && matchesPrice && matchesDate;
+    return matchesSearch && matchesCategory && matchesFree && matchesPrice && matchesDate && isNotSports && isNotPlay;
   });
 
   const formatDate = (date: string, endDate?: string | null) => {

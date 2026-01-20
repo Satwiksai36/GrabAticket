@@ -2,7 +2,7 @@ import React from 'react';
 import { Copy, CreditCard, Percent, Gift, Megaphone, Tag, Star, Bell, PartyPopper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { useAnnouncements } from '@/hooks/useAdmin';
+import { useAnnouncements, useActivePromotions } from '@/hooks/useAdmin';
 
 const ICONS = {
     Megaphone,
@@ -16,15 +16,33 @@ const ICONS = {
 };
 
 const SpecialOffers: React.FC = () => {
-    const { data: announcements, isLoading } = useAnnouncements();
+    const { data: announcements, isLoading: loadingAnnouncements } = useAnnouncements();
+    const { data: promotions, isLoading: loadingPromotions } = useActivePromotions();
 
     const copyCode = (code: string) => {
         navigator.clipboard.writeText(code);
         toast.success('Coupon code copied to clipboard!');
     };
 
+    const isLoading = loadingAnnouncements || loadingPromotions;
+
     if (isLoading) return null;
-    if (!announcements || announcements.length === 0) return null;
+
+    // Map promotions to the same structure as announcements
+    const mappedPromotions = promotions?.map((promo: any) => ({
+        id: promo.id || promo.code,
+        title: `${promo.discount_value}${promo.discount_type === 'percentage' ? '%' : ' OFF'} Discount`,
+        content: promo.description,
+        promo_code: promo.code,
+        icon_type: 'Tag',
+        // Use default gradient for promotions
+        color_from: 'from-violet-600',
+        color_to: 'to-indigo-600'
+    })) || [];
+
+    const combinedOffers = [...(announcements || []), ...mappedPromotions];
+
+    if (combinedOffers.length === 0) return null;
 
     return (
         <section className="py-12 bg-background relative overflow-hidden">
@@ -35,14 +53,33 @@ const SpecialOffers: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-auto relative z-10">
-                    {announcements.map((offer: any) => {
+                    {combinedOffers.map((offer: any) => {
                         const Icon = ICONS[offer.icon_type as keyof typeof ICONS] || Percent;
-                        const gradient = offer.color_from && offer.color_to
-                            ? `bg-gradient-to-r ${offer.color_from} ${offer.color_to}`
-                            : 'bg-gradient-to-r from-pink-600 to-purple-600';
+
+                        // Handle gradient: if it starts with '#', construct arbitrary value class, else assume class name
+                        let gradientClass = 'bg-gradient-to-r from-pink-600 to-purple-600';
+                        let style = {};
+
+                        if (offer.color_from && offer.color_to) {
+                            if (offer.color_from.startsWith('#')) {
+                                // It's a hex code, use inline style for linear-gradient to be safe and simple
+                                style = { background: `linear-gradient(to right, ${offer.color_from}, ${offer.color_to})` };
+                                gradientClass = ''; // Clear default
+                            } else {
+                                // It's likely a tailwind class (or we assume so for mapped promos)
+                                // If mapped promos used 'from-violet-600', we need to construct the full class string carefully.
+                                // The original code did `bg-gradient-to-r ${offer.color_from} ${offer.color_to}`.
+                                // If our mapped data provides `from-...` and `to-...`, this works.
+                                gradientClass = `bg-gradient-to-r ${offer.color_from} ${offer.color_to}`;
+                            }
+                        }
 
                         return (
-                            <div key={offer.id} className={`relative overflow-hidden rounded-xl ${gradient} p-6 text-white shadow-lg h-full bg-cover bg-center transition-transform hover:scale-105 duration-300`}>
+                            <div
+                                key={offer.id}
+                                className={`relative overflow-hidden rounded-xl p-6 text-white shadow-lg h-full transition-transform hover:scale-105 duration-300 ${gradientClass}`}
+                                style={style}
+                            >
                                 {/* Background Decoration */}
                                 <div className="absolute -bottom-4 -right-4 opacity-10 rotate-[-15deg]">
                                     <Icon className="w-48 h-48" />

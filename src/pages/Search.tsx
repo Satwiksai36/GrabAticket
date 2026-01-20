@@ -24,10 +24,18 @@ const Search: React.FC = () => {
         movie.genre?.toLowerCase().includes(query.toLowerCase())
     );
 
+    const filteredSports = (events || []).filter((event) =>
+        (event.title.toLowerCase().includes(query.toLowerCase()) ||
+            event.venue.toLowerCase().includes(query.toLowerCase()) ||
+            event.category.toLowerCase().includes(query.toLowerCase())) &&
+        event.category === 'Sports'
+    );
+
     const filteredEvents = (events || []).filter((event) =>
-        event.title.toLowerCase().includes(query.toLowerCase()) ||
-        event.venue.toLowerCase().includes(query.toLowerCase()) ||
-        event.category.toLowerCase().includes(query.toLowerCase())
+        (event.title.toLowerCase().includes(query.toLowerCase()) ||
+            event.venue.toLowerCase().includes(query.toLowerCase()) ||
+            event.category.toLowerCase().includes(query.toLowerCase())) &&
+        event.category !== 'Sports'
     );
 
     return (
@@ -90,6 +98,46 @@ const Search: React.FC = () => {
                                 </section>
                             )}
 
+                            {/* Sports Section */}
+                            {filteredSports.length > 0 && (
+                                <section>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-xl font-bold flex items-center gap-2">
+                                            <Calendar className="h-5 w-5 text-primary" />
+                                            Sports ({filteredSports.length})
+                                        </h2>
+                                        <Button variant="link" asChild>
+                                            <Link to="/sports">View All Sports <ArrowRight className="ml-1 h-4 w-4" /></Link>
+                                        </Button>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {filteredSports.map((event) => (
+                                            <Link key={event.id} to={`/events/${event.id}`}>
+                                                <Card className="group overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1 h-full">
+                                                    <div className="relative aspect-[16/10] overflow-hidden">
+                                                        <img
+                                                            src={event.image_url || 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=400&fit=crop'}
+                                                            alt={event.title}
+                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                        />
+                                                        <Badge className="absolute top-3 left-3">{event.category}</Badge>
+                                                    </div>
+                                                    <CardContent className="p-4">
+                                                        <h3 className="font-semibold text-foreground text-lg mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+                                                            {event.title}
+                                                        </h3>
+                                                        <p className="text-sm text-muted-foreground mb-1">{new Date(event.date).toLocaleDateString()} • {event.venue}</p>
+                                                        <span className="font-semibold text-primary">
+                                                            {event.is_free ? 'Free' : `₹${Number(event.price).toLocaleString()}`}
+                                                        </span>
+                                                    </CardContent>
+                                                </Card>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
                             {/* Events Section */}
                             {filteredEvents.length > 0 && (
                                 <section>
@@ -130,7 +178,7 @@ const Search: React.FC = () => {
                                 </section>
                             )}
 
-                            {filteredMovies.length === 0 && filteredEvents.length === 0 && (
+                            {filteredMovies.length === 0 && filteredEvents.length === 0 && filteredSports.length === 0 && (
                                 <div className="text-center py-12">
                                     <div className="inline-flex items-center justify-center p-6 bg-muted rounded-full mb-4">
                                         <SearchIcon className="h-12 w-12 text-muted-foreground" />

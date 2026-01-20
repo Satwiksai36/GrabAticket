@@ -126,8 +126,8 @@ const AdminEvents: React.FC = () => {
 
       const eventData = {
         title: formData.title,
-        description: formData.description || undefined,
-        image_url: formData.image_url || undefined,
+        description: formData.description || null,
+        image_url: formData.image_url || null,
         date: eventDate,
         venue: 'To Be Announced',
         category: formData.category,
@@ -135,12 +135,12 @@ const AdminEvents: React.FC = () => {
         is_free: false,
         total_tickets: 0,
         available_tickets: 0,
-        organizer: formData.organizer || undefined,
-        // artist: formData.artist || undefined, // Not in DB schema
+        organizer: formData.organizer || null,
+        artist: formData.artist || null,
         district_id: undefined,
-        // duration: parseInt(formData.duration) || undefined, // Not in DB schema
-        // language: formData.language || undefined, // Not in DB schema
-        // is_active: formData.is_active, // Not in DB schema
+        duration: formData.duration ? parseInt(formData.duration) : null,
+        language: formData.language || null,
+        is_active: formData.is_active,
       };
 
       if (editingEvent) {
