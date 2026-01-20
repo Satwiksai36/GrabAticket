@@ -28,7 +28,8 @@ import {
   Star,
   ChevronRight,
   Layers,
-  Store
+  Store,
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -70,6 +71,7 @@ const sidebarItems: SidebarItem[] = [
   { label: 'Food & Beverages', icon: Utensils, href: '/admin/food' },
   { label: 'Kitchen Orders', icon: ShoppingBag, href: '/admin/kitchen-orders' },
   { label: 'Promo Codes', icon: Tag, href: '/admin/promocodes' },
+  { label: 'Coming Soon', icon: Sparkles, href: '/admin/coming-soon' },
   { label: 'Announcements', icon: Megaphone, href: '/admin/announcements' },
   { label: 'Users', icon: Users, href: '/admin/users' },
   { label: 'Spotlights', icon: Star, href: '/admin/spotlights' },
